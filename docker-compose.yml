@@ -1,0 +1,57 @@
+version: "3.5"
+
+services:
+
+  apache:
+    image: bitnami/apache:latest
+    container_name: o_nome_que_desejar_apache
+    ports:
+      - 80:8080
+    volumes:
+      - .:/app
+      - ./docker/apache/conf/app.conf:/vhosts/app.conf:ro
+      - ./docker/apache/logs:/opt/bitnami/apache2/logs
+
+  php-fpm:
+    build: docker/php-fpm
+    container_name: o_nome_que_desejar_php
+    volumes:
+      - .:/app
+      - ./docker/php-fpm/conf/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+      # - ./docker/php-fpm/conf/custom.ini:/usr/local/etc/php/conf.d
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+      PHP_IDE_CONFIG: "serverName=xdebug-docker"
+
+  mysql:
+    image: mysql:5.7
+    container_name: o_nome_que_desejar_mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/conf/:/etc/mysql/conf.d/:rw
+      # - ./docker/mysql/logs:/var/log/mysql
+      # - ./docker/mysql/temp:/home
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: o_nome_que_desejar
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: o_nome_que_desejar_phpmyadmin
+    ports:
+      - 8001:80
+    volumes:
+      - ./docker/phpmyadmin/php-fpm.conf:/etc/php-fpm.conf
+      - ./docker/phpmyadmin/php.ini:/etc/php.ini
+      - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 1G
+    restart: always
