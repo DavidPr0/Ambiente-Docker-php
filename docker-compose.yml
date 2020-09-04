@@ -17,8 +17,7 @@ services:
     container_name: o_nome_que_desejar_php
     volumes:
       - .:/app
-      - ./docker/php-fpm/conf/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
-      # - ./docker/php-fpm/conf/custom.ini:/usr/local/etc/php/conf.d
+      - ./docker/php-fpm/conf/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       XDEBUG_CONFIG: remote_host=host.docker.internal
       PHP_IDE_CONFIG: "serverName=xdebug-docker"
@@ -31,8 +30,6 @@ services:
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/conf/:/etc/mysql/conf.d/:rw
-      # - ./docker/mysql/logs:/var/log/mysql
-      # - ./docker/mysql/temp:/home
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
